@@ -25,11 +25,24 @@ void MainWindow::setIpAddr(QString ipAddr)
     this->ip = ipAddr;
 }
 
+void MainWindow::setMin(int min)
+{
+    this->min = min;
+}
+
+void MainWindow::setMax(int max)
+{
+    this->max = max;
+}
+
 void MainWindow::tcpConnect()
 {
     socket->connectToHost(ip,1234);
     if(socket->waitForConnected(3000))
     {
+        ui->btnStart->setEnabled(true);
+        ui->btnStop->setEnabled(true);
+
         statusBar()->showMessage("Connected!");
         qDebug() << "Connected";
     }
@@ -42,6 +55,9 @@ void MainWindow::tcpConnect()
 void MainWindow::tcpDisconnect()
 {
     socket->disconnectFromHost();
+
+    ui->btnStart->setEnabled(false);
+    ui->btnStop->setEnabled(false);
     statusBar()->showMessage("Disconnected!");
     qDebug() << "Disconnected";
 }

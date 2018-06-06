@@ -20,12 +20,17 @@ public:
 
 public slots:
     void setIpAddr(QString ipAddr);
+    void setMin(int min);
+    void setMax(int max);
+
     void putData();
     void tcpConnect();
     void tcpDisconnect();
 
 private:
     QString ip;
+    int min, max;
+
     Ui::MainWindow *ui;
     QTcpSocket *socket;
 };
