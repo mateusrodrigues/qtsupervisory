@@ -30,6 +30,7 @@ void MainWindow::tcpConnect()
     socket->connectToHost(ip,1234);
     if(socket->waitForConnected(3000))
     {
+        statusBar()->showMessage("Connected!");
         qDebug() << "Connected";
     }
     else
@@ -41,10 +42,8 @@ void MainWindow::tcpConnect()
 void MainWindow::tcpDisconnect()
 {
     socket->disconnectFromHost();
-    if (socket->waitForDisconnected(3000))
-    {
-        qDebug() << "Disconnected";
-    }
+    statusBar()->showMessage("Disconnected!");
+    qDebug() << "Disconnected";
 }
 
 void MainWindow::putData()
