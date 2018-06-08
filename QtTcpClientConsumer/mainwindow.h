@@ -14,15 +14,17 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-  
-  void tcpConnect();
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+
 public slots:
-  void getData();
+    void tcpConnect();
+    void getData();
+
 private:
-  Ui::MainWindow *ui;
-  QTcpSocket *socket;
+    Ui::MainWindow *ui;
+    QTcpSocket *socket;
+    QString *ip;
 };
 
 #endif // MAINWINDOW_H

@@ -77,6 +77,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QPushButton" name="btnConnect">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
           <string>Connect</string>
          </property>
@@ -84,6 +87,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnDisconnet">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
           <string>Disconnect</string>
          </property>
