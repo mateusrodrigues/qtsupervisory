@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDateTime>
+#include <QTimer>
 #include <arpa/inet.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -8,7 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     socket = new QTcpSocket(this);
+    timer = new QTimer(this);
+    list = new QStringList();
+    listModel = new QStringListModel(this);
 
+    // Timer
+    connect(timer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(putData()));
     // Connect button
     connect(ui->btnConnect,
           SIGNAL(clicked(bool)),
@@ -19,6 +28,16 @@ MainWindow::MainWindow(QWidget *parent) :
           SIGNAL(clicked(bool)),
           this,
           SLOT(tcpDisconnect()));
+    // Start button
+    connect(ui->btnStart,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(startFeed()));
+    // Stop button
+    connect(ui->btnStop,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(stopFeed()));
 }
 
 void MainWindow::setIpAddr(QString ipAddr)
@@ -26,6 +45,8 @@ void MainWindow::setIpAddr(QString ipAddr)
     struct sockaddr_in sa;
     const char* ipAddrCStr = ipAddr.toStdString().c_str();
 
+    // Validate IP address being typed in.
+    // Red means invalid, green means valid.
     int isValid = inet_pton(AF_INET, ipAddrCStr, &(sa.sin_addr));
     if (isValid == 0)
     {
@@ -80,16 +101,30 @@ void MainWindow::tcpDisconnect()
     qDebug() << "Disconnected";
 }
 
+void MainWindow::startFeed()
+{
+    int interval = ui->sliderTiming->value();
+    timer->setInterval(interval * 1000);
+    timer->start();
+}
+
+void MainWindow::stopFeed()
+{
+    timer->stop();
+}
+
 void MainWindow::putData()
 {
     QDateTime datetime;
     QString str;
     qint64 msecdate;
+    int min = ui->sliderMin->value();
+    int max = ui->sliderMax->value();
 
-    if(socket->state()== QAbstractSocket::ConnectedState)
+    if(socket->state() == QAbstractSocket::ConnectedState)
     {
         msecdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
-        str = "set "+ QString::number(msecdate) + " " + QString::number(qrand()%35)+"\r\n";
+        str = "set "+ QString::number(msecdate) + " " + QString::number(min + (qrand() % max))+"\r\n";
 
         qDebug() << str;
         qDebug() << socket->write(str.toStdString().c_str()) << " bytes written";
@@ -97,11 +132,22 @@ void MainWindow::putData()
         {
             qDebug() << "wrote";
         }
+
+        // add latest information to the list
+        list->append(str);
+        listModel->setStringList(*list);
+        // set the list as the liewview model
+        ui->listView->setModel(listModel);
+        // scroll listview to bottom
+        ui->listView->scrollTo(listModel->index(list->size() - 1));
     }
 }
 
 MainWindow::~MainWindow()
 {
     delete socket;
+    delete timer;
+    delete list;
+    delete listModel;
     delete ui;
 }

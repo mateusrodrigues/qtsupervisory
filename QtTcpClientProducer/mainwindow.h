@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QDebug>
+#include <QTimer>
+#include <QStringListModel>
 
 namespace Ui
 {
@@ -26,6 +28,8 @@ public slots:
     void putData();
     void tcpConnect();
     void tcpDisconnect();
+    void startFeed();
+    void stopFeed();
 
 private:
     QString ip;
@@ -33,6 +37,9 @@ private:
 
     Ui::MainWindow *ui;
     QTcpSocket *socket;
+    QTimer *timer;
+    QStringList *list;
+    QStringListModel *listModel;
 };
 
 #endif // MAINWINDOW_H
