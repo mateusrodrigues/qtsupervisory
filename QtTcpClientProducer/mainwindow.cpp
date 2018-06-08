@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDateTime>
+#include <arpa/inet.h>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)
@@ -22,7 +23,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::setIpAddr(QString ipAddr)
 {
-    this->ip = ipAddr;
+    struct sockaddr_in sa;
+    const char* ipAddrCStr = ipAddr.toStdString().c_str();
+
+    int isValid = inet_pton(AF_INET, ipAddrCStr, &(sa.sin_addr));
+    if (isValid == 0)
+    {
+        QPalette palette = ui->editIpAddr->palette();
+        palette.setColor(ui->editIpAddr->foregroundRole(), Qt::red);
+        ui->editIpAddr->setPalette(palette);
+    }
+    else
+    {
+        QPalette palette = ui->editIpAddr->palette();
+        palette.setColor(ui->editIpAddr->foregroundRole(), Qt::darkGreen);
+        ui->editIpAddr->setPalette(palette);
+
+        this->ip = ipAddr;
+    }
 }
 
 void MainWindow::setMin(int min)
