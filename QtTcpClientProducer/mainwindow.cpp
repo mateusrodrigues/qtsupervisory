@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
             SIGNAL(clicked(bool)),
             this,
             SLOT(stopFeed()));
+
+    qsrand(time(NULL));
 }
 
 void MainWindow::setIpAddr(QString ipAddr)
@@ -124,7 +126,7 @@ void MainWindow::putData()
     if(socket->state() == QAbstractSocket::ConnectedState)
     {
         msecdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
-        str = "set "+ QString::number(msecdate) + " " + QString::number(min + (qrand() % max))+"\r\n";
+        str = "set "+ QString::number(msecdate) + " " + QString::number(min + (qrand() % (max - min + 1)))+"\r\n";
 
         qDebug() << str;
         qDebug() << socket->write(str.toStdString().c_str()) << " bytes written";
