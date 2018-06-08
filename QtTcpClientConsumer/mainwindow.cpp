@@ -43,9 +43,10 @@ void MainWindow::setIpAddr(QString ipAddr)
 
 void MainWindow::tcpConnect()
 {
-    socket->connectToHost("127.0.0.1",1234);
+    socket->connectToHost(ip,1234);
     if(socket->waitForConnected(3000))
     {
+        ui->statusBar->showMessage("Connected!");
         qDebug() << "Connected";
     }
     else
