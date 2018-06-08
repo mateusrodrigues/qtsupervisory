@@ -5,7 +5,8 @@
 #include <QTcpSocket>
 #include <QDebug>
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -18,13 +19,18 @@ public:
     ~MainWindow();
 
 public slots:
+    void setIpAddr(QString ipAddr);
+
     void tcpConnect();
     void getData();
 
 private:
+    QString ip;
+    int interval;
+
     Ui::MainWindow *ui;
     QTcpSocket *socket;
-    QString *ip;
+
 };
 
 #endif // MAINWINDOW_H

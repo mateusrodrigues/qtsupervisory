@@ -27,11 +27,11 @@
      <string>getData</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>10</y>
       <width>261</width>
       <height>308</height>
      </rect>
@@ -80,11 +80,11 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>21</x>
-      <y>341</y>
+      <x>20</x>
+      <y>330</y>
       <width>261</width>
       <height>74</height>
      </rect>
@@ -182,10 +182,29 @@
      <y>406</y>
     </hint>
     <hint type="destinationlabel">
-     <x>274</x>
-     <y>413</y>
+     <x>278</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editIpAddr</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setIpAddr(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>81</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>setIpAddr(QString)</slot>
+ </slots>
 </ui>
