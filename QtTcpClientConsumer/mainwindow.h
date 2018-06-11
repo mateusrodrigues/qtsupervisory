@@ -32,6 +32,7 @@ private:
 
     Ui::MainWindow *ui;
     QTcpSocket *socket;
+    QTimer *timer;
 
     void getIps();
 };

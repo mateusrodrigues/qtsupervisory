@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QTimer>
 #include <QDateTime>
 #include <arpa/inet.h>
 
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     socket = new QTcpSocket(this);
+    timer = new QTimer(this);
     tcpConnect();
 
     connect(ui->pushButtonGet,
@@ -148,5 +150,6 @@ void MainWindow::getIps()
 MainWindow::~MainWindow()
 {
     delete socket;
+    delete timer;
     delete ui;
 }
