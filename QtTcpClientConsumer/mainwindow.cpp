@@ -15,6 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
           SIGNAL(clicked(bool)),
           this,
           SLOT(getData()));
+    connect(ui->buttonConnect,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(tcpConnect()));
+    connect(ui->buttonDisconnet,
+            SIGNAL(clicked(bool)),
+            this,
+            SLOT(tcpDisconnect()));
 }
 
 void MainWindow::setIpAddr(QString ipAddr)
@@ -41,6 +49,11 @@ void MainWindow::setIpAddr(QString ipAddr)
     }
 }
 
+void MainWindow::setInterval(int interval)
+{
+    this->interval = interval;
+}
+
 void MainWindow::tcpConnect()
 {
     socket->connectToHost(ip,1234);
@@ -48,11 +61,33 @@ void MainWindow::tcpConnect()
     {
         ui->statusBar->showMessage("Connected!");
         qDebug() << "Connected";
+
+        ui->buttonConnect->setEnabled(false);
+        ui->buttonUpdate->setEnabled(true);
+        ui->sliderTiming->setEnabled(true);
+        ui->buttonStart->setEnabled(true);
+        ui->buttonStop->setEnabled(true);
+
+        getIps();
     }
     else
     {
         qDebug() << "Disconnected";
     }
+}
+
+void MainWindow::tcpDisconnect()
+{
+    socket->disconnectFromHost();
+
+    ui->buttonConnect->setEnabled(true);
+    ui->buttonStart->setEnabled(false);
+    ui->buttonStop->setEnabled(false);
+    ui->buttonUpdate->setEnabled(false);
+    ui->sliderTiming->setEnabled(false);
+
+    statusBar()->showMessage("Disconnected!");
+    qDebug() << "Disconnected";
 }
 
 void MainWindow::getData(){
@@ -62,16 +97,16 @@ void MainWindow::getData(){
     qint64 thetime;
     qDebug() << "to get data...";
 
-    if(socket->state() == QAbstractSocket::ConnectedState)
+    if (socket->state() == QAbstractSocket::ConnectedState)
     {
-        if(socket->isOpen())
+        if (socket->isOpen())
         {
             qDebug() << "reading...";
             socket->write("get 127.0.0.1 5\r\n");
             socket->waitForBytesWritten();
             socket->waitForReadyRead();
             qDebug() << socket->bytesAvailable();
-            while(socket->bytesAvailable())
+            while (socket->bytesAvailable())
             {
                 str = socket->readLine().replace("\n","").replace("\r","");
                 list = str.split(" ");
@@ -87,9 +122,31 @@ void MainWindow::getData(){
     }
 }
 
+void MainWindow::getIps()
+{
+    QString str;
+    qDebug() << "Getting IP list...";
+
+    if (socket->state() == QAbstractSocket::ConnectedState)
+    {
+        if (socket->isOpen())
+        {
+            socket->write("list\r\n");
+            socket->waitForBytesWritten();
+            socket->waitForReadyRead();
+            qDebug() << socket->bytesAvailable();
+            while (socket->bytesAvailable())
+            {
+                str = socket->readLine().replace("\n","").replace("\r","");
+                ui->listIps->addItem(str);
+            }
+        }
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
-  delete socket;
-  delete ui;
+    delete socket;
+    delete ui;
 }

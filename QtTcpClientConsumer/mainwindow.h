@@ -20,8 +20,10 @@ public:
 
 public slots:
     void setIpAddr(QString ipAddr);
+    void setInterval(int interval);
 
     void tcpConnect();
+    void tcpDisconnect();
     void getData();
 
 private:
@@ -31,6 +33,7 @@ private:
     Ui::MainWindow *ui;
     QTcpSocket *socket;
 
+    void getIps();
 };
 
 #endif // MAINWINDOW_H

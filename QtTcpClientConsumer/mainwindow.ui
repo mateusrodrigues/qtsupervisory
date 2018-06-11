@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>739</width>
-    <height>492</height>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -203,8 +203,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>sliderTiming</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setInterval(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>398</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setIpAddr(QString)</slot>
+  <slot>setInterval(int)</slot>
  </slots>
 </ui>
