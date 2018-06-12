@@ -20,14 +20,19 @@ public:
 
 public slots:
     void setIpAddr(QString ipAddr);
+    void setSource();
     void setInterval(int interval);
 
     void tcpConnect();
     void tcpDisconnect();
+
+    void startDataRead();
+    void stopDataRead();
+
     void getData();
 
 private:
-    QString ip;
+    QString ip, source;
     int interval;
 
     Ui::MainWindow *ui;

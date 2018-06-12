@@ -13,10 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     tcpConnect();
 
-    connect(ui->pushButtonGet,
-          SIGNAL(clicked(bool)),
-          this,
-          SLOT(getData()));
+    connect(timer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(getData()));
     connect(ui->buttonConnect,
             SIGNAL(clicked(bool)),
             this,
@@ -51,6 +51,22 @@ void MainWindow::setIpAddr(QString ipAddr)
     }
 }
 
+void MainWindow::setSource()
+{
+    // Clear the currently plotted graph
+    // TODO: Implement the graph clear
+
+    // get the currently selected item of the
+    // IP list.
+    QString ipAddr;
+    ipAddr = ui->listIps->selectedItems().first()->text();
+
+    ui->buttonStart->setEnabled(true);
+    ui->buttonStop->setEnabled(true);
+
+    this->source = ipAddr;
+}
+
 void MainWindow::setInterval(int interval)
 {
     this->interval = interval;
@@ -67,8 +83,6 @@ void MainWindow::tcpConnect()
         ui->buttonConnect->setEnabled(false);
         ui->buttonUpdate->setEnabled(true);
         ui->sliderTiming->setEnabled(true);
-        ui->buttonStart->setEnabled(true);
-        ui->buttonStop->setEnabled(true);
 
         getIps();
     }
@@ -88,26 +102,54 @@ void MainWindow::tcpDisconnect()
     ui->buttonUpdate->setEnabled(false);
     ui->sliderTiming->setEnabled(false);
 
+    ui->listIps->clear();
+
     statusBar()->showMessage("Disconnected!");
     qDebug() << "Disconnected";
+}
+
+void MainWindow::startDataRead()
+{
+    ui->buttonStart->setEnabled(false);
+    ui->buttonStop->setEnabled(true);
+
+    timer->setInterval(interval * 1000);
+    timer->setSingleShot(false);
+    timer->start();
+}
+
+void MainWindow::stopDataRead()
+{
+    ui->buttonStart->setEnabled(true);
+    ui->buttonStop->setEnabled(false);
+
+    timer->stop();
 }
 
 void MainWindow::getData(){
     QString str;
     QByteArray array;
     QStringList list;
-    qint64 thetime;
-    qDebug() << "to get data...";
+    qint64 time;
+    qDebug() << "getting data...";
 
     if (socket->state() == QAbstractSocket::ConnectedState)
     {
         if (socket->isOpen())
         {
+            // build command
             qDebug() << "reading...";
-            socket->write("get 127.0.0.1 5\r\n");
+            QString command = "get " + source + " 1\r\n";
+            qDebug() << command;
+
+            // write to socket
+            socket->write(command.toStdString().c_str());
             socket->waitForBytesWritten();
             socket->waitForReadyRead();
+
             qDebug() << socket->bytesAvailable();
+
+            // deserialize information from socket
             while (socket->bytesAvailable())
             {
                 str = socket->readLine().replace("\n","").replace("\r","");
@@ -115,9 +157,9 @@ void MainWindow::getData(){
                 if(list.size() == 2){
                     bool ok;
                     str = list.at(0);
-                    thetime = str.toLongLong(&ok);
+                    time = str.toLongLong(&ok);
                     str = list.at(1);
-                    qDebug() << thetime << ": " << str;
+                    qDebug() << time << ": " << str;
                 }
             }
         }
