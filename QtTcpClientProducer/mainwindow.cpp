@@ -105,6 +105,7 @@ void MainWindow::tcpDisconnect()
 
 void MainWindow::startFeed()
 {
+    putData();
     int interval = ui->sliderTiming->value();
     timer->setInterval(interval * 1000);
     timer->start();
