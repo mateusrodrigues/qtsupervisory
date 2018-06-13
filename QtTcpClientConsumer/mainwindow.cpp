@@ -54,15 +54,18 @@ void MainWindow::setIpAddr(QString ipAddr)
 void MainWindow::setSource()
 {
     // Clear the currently plotted graph
-    // TODO: Implement the graph clear
+    ui->widget->clear();
 
     // get the currently selected item of the
     // IP list.
     QString ipAddr;
     ipAddr = ui->listIps->selectedItems().first()->text();
 
-    ui->buttonStart->setEnabled(true);
-    ui->buttonStop->setEnabled(true);
+    if (!ui->buttonStart->isEnabled() && !ui->buttonStop->isEnabled())
+    {
+        ui->buttonStart->setEnabled(true);
+        ui->buttonStop->setEnabled(true);
+    }
 
     this->source = ipAddr;
 }
@@ -94,6 +97,7 @@ void MainWindow::tcpConnect()
 
 void MainWindow::tcpDisconnect()
 {
+    timer->stop();
     socket->disconnectFromHost();
 
     ui->buttonConnect->setEnabled(true);
@@ -160,6 +164,8 @@ void MainWindow::getData(){
                     time = str.toLongLong(&ok);
                     str = list.at(1);
                     qDebug() << time << ": " << str;
+
+                    ui->widget->addPoint(time, str.toInt());
                 }
             }
         }
