@@ -54,15 +54,10 @@ void MainWindow::setIpAddr(QString ipAddr)
     }
 }
 
-void MainWindow::setSource()
+void MainWindow::setSource(QString ipAddr)
 {
     // Clear the currently plotted graph
     ui->widget->clear();
-
-    // get the currently selected item of the
-    // IP list.
-    QString ipAddr;
-    ipAddr = ui->listIps->selectedItems().first()->text();
 
     if (!ui->buttonStart->isEnabled() && !ui->buttonStop->isEnabled())
     {
@@ -70,7 +65,8 @@ void MainWindow::setSource()
         ui->buttonStop->setEnabled(true);
     }
 
-    this->source = ipAddr;
+    if (ipAddr.size() != 0)
+        this->source = ipAddr;
 }
 
 void MainWindow::setInterval(int interval)
@@ -197,6 +193,7 @@ void MainWindow::getIps()
             socket->waitForBytesWritten();
             socket->waitForReadyRead();
             qDebug() << socket->bytesAvailable();
+            ui->listIps->clear();
             while (socket->bytesAvailable())
             {
                 str = socket->readLine().replace("\n","").replace("\r","");

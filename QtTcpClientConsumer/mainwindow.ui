@@ -225,22 +225,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonUpdate</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setSource()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>209</x>
-     <y>346</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>315</x>
-     <y>346</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonStart</sender>
    <signal>clicked(bool)</signal>
    <receiver>MainWindow</receiver>
@@ -272,12 +256,45 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>listIps</sender>
+   <signal>currentTextChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSource(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>284</x>
+     <y>201</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUpdate</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>getIps()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setIpAddr(QString)</slot>
   <slot>setInterval(int)</slot>
-  <slot>setSource()</slot>
+  <slot>setSource(QString)</slot>
   <slot>startDataRead()</slot>
   <slot>stopDataRead()</slot>
+  <slot>getIps()</slot>
  </slots>
 </ui>
