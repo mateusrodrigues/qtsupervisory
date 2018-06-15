@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <vector>
 #include <QTimer>
 #include <QDateTime>
 #include <arpa/inet.h>
+
+#define MAX_ITEMS = 30;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -120,6 +123,8 @@ void MainWindow::startDataRead()
     timer->setInterval(interval * 1000);
     timer->setSingleShot(false);
     timer->start();
+
+    getData();
 }
 
 void MainWindow::stopDataRead()
@@ -134,7 +139,10 @@ void MainWindow::getData(){
     QString str;
     QByteArray array;
     QStringList list;
-    qint64 time;
+
+    std::vector<float> time;
+    std::vector<float> values;
+
     qDebug() << "getting data...";
 
     if (socket->state() == QAbstractSocket::ConnectedState)
@@ -143,7 +151,7 @@ void MainWindow::getData(){
         {
             // build command
             qDebug() << "reading...";
-            QString command = "get " + source + " 1\r\n";
+            QString command = "get " + source + " 30\r\n";
             qDebug() << command;
 
             // write to socket
@@ -160,14 +168,18 @@ void MainWindow::getData(){
                 list = str.split(" ");
                 if(list.size() == 2){
                     bool ok;
-                    str = list.at(0);
-                    time = str.toLongLong(&ok);
-                    str = list.at(1);
-                    qDebug() << time << ": " << str;
 
-                    ui->widget->addPoint(time, str.toInt());
+                    str = list.at(0);
+                    time.push_back(str.toFloat(&ok));
+
+                    str = list.at(1);
+                    values.push_back(str.toFloat(&ok));
+
+                    qDebug() << list.at(0) << ": " << list.at(1);
                 }
             }
+
+            ui->widget->setPlot(time, values);
         }
     }
 }

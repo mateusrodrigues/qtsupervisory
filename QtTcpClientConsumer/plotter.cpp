@@ -9,12 +9,14 @@
 
 Plotter::Plotter(QWidget *parent) : QWidget(parent)
 {
-    data = new QMap<qint64, int>();
+    time = new vector<float>();
+    values = new vector<float>();
 }
 
 Plotter::~Plotter()
 {
-    delete data;
+    delete time;
+    delete values;
 }
 
 void Plotter::paintEvent(QPaintEvent *event)
@@ -48,44 +50,51 @@ void Plotter::paintEvent(QPaintEvent *event)
     pen.setColor(QColor(0, 0, 255));
     painter.setPen(pen);
 
-    int dataCount = data->count();
+    int data_count = this->time->size();
 
     int x1 = 0;
     int y1 = 0;
     int x2 = 0;
     int y2 = height();
 
-    QMap<qint64, int>::iterator iter;
-
     int i = 0;
-    for (iter = data->begin(); iter != data->end(); iter++)
-    {
-        double max = *std::max_element(data->begin(), data->end());
+    double values_max = 0.0;
+    if (this->values->size() > 0)
+        values_max = *std::max_element(values->begin(), values->end());
 
+    for (vector<float>::iterator iter = values->begin(); iter != values->end(); iter++)
+    {
         x1 = x2;
         y1 = y2;
 
-        x2 = (i++ / MAX_ITEMS) * width();
-        y2 = height() - ((iter.value() / max) * height());
+        x2 = (i++ / (float)data_count) * width();
+        y2 = height() - ((*iter / values_max) * height());
 
         painter.drawLine(x1, y1, x2, y2);
     }
 }
 
-void Plotter::addPoint(qint64 timestamp, int value)
+void Plotter::setPlot(vector<float> time, vector<float> values)
 {
-    data->insert(timestamp, value);
-    if (data->count() > MAX_ITEMS)
-    {
-        qint64 key = data->firstKey();
-        data->remove(key);
-    }
+    // If sizes are different, return
+    if (time.size() != values.size())
+        return;
+    this->time->clear();
+    this->values->clear();
+
+    // Copy vector values to class ones
+    for (vector<float>::iterator i = time.begin(); i != time.end(); i++)
+        this->time->push_back(*i);
+    for (vector<float>::iterator i = values.begin(); i != values.end(); i++)
+        this->values->push_back(*i);
 
     this->repaint();
 }
 
 void Plotter::clear()
 {
-    data->clear();
+    this->time->clear();
+    this->values->clear();
+
     this->repaint();
 }

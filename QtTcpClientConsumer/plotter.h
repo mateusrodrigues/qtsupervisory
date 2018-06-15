@@ -1,8 +1,11 @@
 #ifndef PLOTTER_H
 #define PLOTTER_H
 
+#include <vector>
 #include <QMap>
 #include <QWidget>
+
+using namespace std;
 
 class Plotter : public QWidget
 {
@@ -12,7 +15,7 @@ public:
     ~Plotter();
     void paintEvent(QPaintEvent *event);
 
-    void addPoint(qint64 timestamp, int value);
+    void setPlot(vector<float> time, vector<float> values);
     void clear();
 
 signals:
@@ -20,7 +23,8 @@ signals:
 public slots:
 
 private:
-    QMap<qint64, int> *data;
+    vector<float> *time;
+    vector<float> *values;
 };
 
 #endif // PLOTTER_H
