@@ -9,15 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     socket = new QTcpSocket(this);
-    timer = new QTimer(this);
+    progTimer = new QTimer(this);
     list = new QStringList();
     listModel = new QStringListModel(this);
 
-    // Timer
-    connect(timer,
+    // Progress Bar Timer
+    connect(progTimer,
             SIGNAL(timeout()),
             this,
-            SLOT(putData()));
+            SLOT(updateProgressBar()));
     // Connect button
     connect(ui->btnConnect,
           SIGNAL(clicked(bool)),
@@ -81,6 +81,8 @@ void MainWindow::tcpConnect()
     socket->connectToHost(ip,1234);
     if(socket->waitForConnected(3000))
     {
+        ui->btnConnect->setEnabled(false);
+        ui->btnDisconnet->setEnabled(true);
         ui->btnStart->setEnabled(true);
         ui->btnStop->setEnabled(true);
 
@@ -97,6 +99,8 @@ void MainWindow::tcpDisconnect()
 {
     socket->disconnectFromHost();
 
+    ui->btnConnect->setEnabled(true);
+    ui->btnDisconnet->setEnabled(false);
     ui->btnStart->setEnabled(false);
     ui->btnStop->setEnabled(false);
     statusBar()->showMessage("Disconnected!");
@@ -106,14 +110,19 @@ void MainWindow::tcpDisconnect()
 void MainWindow::startFeed()
 {
     putData();
-    int interval = ui->sliderTiming->value();
-    timer->setInterval(interval * 1000);
-    timer->start();
+    interval = ui->sliderTiming->value();
+
+    // set progress bar timer
+    currSecs = 1;
+    ui->progressBar->setMaximum(interval);
+    progTimer->setInterval(1000);
+    progTimer->start();
 }
 
 void MainWindow::stopFeed()
 {
-    timer->stop();
+    progTimer->stop();
+    ui->progressBar->setValue(1);
 }
 
 void MainWindow::putData()
@@ -146,10 +155,20 @@ void MainWindow::putData()
     }
 }
 
+void MainWindow::updateProgressBar()
+{
+    if (interval == currSecs++)
+    {
+        currSecs = 1;
+        putData();
+    }
+    ui->progressBar->setValue(currSecs);
+}
+
 MainWindow::~MainWindow()
 {
     delete socket;
-    delete timer;
+    delete progTimer;
     delete list;
     delete listModel;
     delete ui;

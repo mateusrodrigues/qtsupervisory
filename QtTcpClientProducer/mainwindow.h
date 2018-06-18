@@ -26,6 +26,7 @@ public slots:
     void setMax(int max);
 
     void putData();
+    void updateProgressBar();
     void tcpConnect();
     void tcpDisconnect();
     void startFeed();
@@ -33,11 +34,11 @@ public slots:
 
 private:
     QString ip;
-    int min, max;
+    int min, max, interval, currSecs;
 
     Ui::MainWindow *ui;
     QTcpSocket *socket;
-    QTimer *timer;
+    QTimer *progTimer;
     QStringList *list;
     QStringListModel *listModel;
 };
