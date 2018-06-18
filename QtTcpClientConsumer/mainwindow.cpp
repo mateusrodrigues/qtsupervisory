@@ -66,7 +66,11 @@ void MainWindow::setSource(QString ipAddr)
     }
 
     if (ipAddr.size() != 0)
+    {
         this->source = ipAddr;
+        if (timer->isActive())
+            getData();
+    }
 }
 
 void MainWindow::setInterval(int interval)

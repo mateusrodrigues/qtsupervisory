@@ -45,7 +45,24 @@ void Plotter::paintEvent(QPaintEvent *event)
     // fill the component with a rectangle
     painter.drawRect(0, 0, this->width(), this->height());
 
-    // draw a blue solid-lined sine function
+    // draw the grid
+    pen.setColor(Qt::gray);
+    pen.setStyle(Qt::DashLine);
+    pen.setWidth(1);
+    painter.setPen(pen);
+
+    int gap = 30;
+    for (int i = 0; i < width(); i += gap)
+    {
+        painter.drawLine(i, 0, i, height());
+    }
+    for (int i = 0; i < height(); i += gap)
+    {
+        painter.drawLine(0, i, width(), i);
+    }
+
+    // draw a blue solid-lined function
+    pen.setWidth(2);
     pen.setStyle(Qt::SolidLine);
     pen.setColor(QColor(0, 0, 255));
     painter.setPen(pen);
